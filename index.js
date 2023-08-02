@@ -10,9 +10,47 @@ app.use(express.json());
 app.use(cors());
 
 // Add your routes or other middleware here
+app.post("/application/add", async (req, res) => {
+  const {
+    candidateName,
+    fatherName,
+    motherName,
+    dob,
+    age,
+    mark1,
+    mark2,
+    aadhar,
+    marksObtained,
+    rankSecured,
+    headmasterName,
+    schoolName,
+  } = req.body;
+  try {
+    const newApplication = new ApplicationForm({
+      candidateName,
+      fatherName,
+      motherName,
+      dob,
+      age,
+      mark1,
+      mark2,
+      aadhar,
+      marksObtained,
+      rankSecured,
+      headmasterName,
+      schoolName,
+    });
+    await newApplication.save();
+    res.status(201).json({ message: "Application added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+app.get("/application/get", async (req, res) => {
+  const data = await ApplicationForm.find();
+  res.status(200).json(data);
+});
 
-app.use("/v1/faculty", require("./routes/faculty"));
-app.use("/v1/form", require("./routes/form"));
 
 mongoose
   .connect(process.env.MONGODB_URL, {
